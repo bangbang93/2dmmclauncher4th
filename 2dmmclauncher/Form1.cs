@@ -341,7 +341,7 @@ namespace _2dmmclauncher
             progressBar1.Value += 1;
             while (tCheckUpdate.ThreadState == System.Threading.ThreadState.Running)
             {
-                Application.DoEvents();
+                this.Refresh();
             }
             this.Hide();
         }
