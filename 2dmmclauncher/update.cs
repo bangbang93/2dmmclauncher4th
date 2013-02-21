@@ -102,23 +102,61 @@ namespace _2dmmclauncher
                         }
 
                 }
-                //if(file.filetype=="D")
-                //{
-                //    getDirInfo(remoteDir+"/"+file.filename, mcDir+"/" + file.filename);
-                //}
 
             }
-        }
-        private void Form3_Load(object sender, EventArgs e)
-        {
-            //Console.WriteLine(yunfile.getBucketUsage());
         }
 
         private void update_Shown(object sender, EventArgs e)
         {
-            ArrayList remoteFile = yunfile.readDir("/2dmmc4th");
-            progressBar1.Maximum = remoteFile.Count;
-            getDirInfo("/2dmmc4th", mcDir.FullName);
+            this.Refresh();
+            checkDir.Text = "正在获取校验文件";
+            checkDir.Refresh();
+            checkFile.Text = "md5.txt";
+            checkFile.Refresh();
+            WebClient md5file = new WebClient();
+            md5file.DownloadFile("http://file.bangbang93.com/2dmmc4th/md5.txt", "rmd5.txt");
+            StreamReader rmd5 = new StreamReader("rmd5.txt");
+            checkDir.Text = "正在读取校验文件";
+            checkDir.Refresh();
+            string[,] md5 = new string[2000, 2];
+            int i = 0;
+            while (rmd5.EndOfStream == false)
+            {
+                string str = rmd5.ReadLine();
+                string[] spliter = { "|" };
+                md5[i, 0] = str.Split(spliter, StringSplitOptions.RemoveEmptyEntries)[0];
+                md5[i, 1] = str.Split(spliter, StringSplitOptions.RemoveEmptyEntries)[1];
+                i++;
+            }
+            int total = i;
+            progressBar1.Maximum = total;
+            for (i = 0; i <= total; i++)
+            {
+                try
+                {
+                    progressBar1.Value++;
+                }
+                catch { }
+                if (md5[i, 0]==null )
+                {
+                    break;
+                }
+                string lmd5 = GetMD5HashFromFile(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0]);
+                checkDir.Text=md5[i,0].Substring(0,md5[i,0].LastIndexOf(@"\"));
+                checkDir.Refresh();
+                checkFile.Text = md5[i, 0].Substring(md5[i, 0].LastIndexOf(@"\"), md5[i, 0].Length - md5[i, 0].LastIndexOf(@"\"));
+                checkFile.Refresh();
+                if (lmd5 != md5[i, 1])
+                {
+                    downFile.Text = "正在下载" + md5[i,0]+"|"+yunfile.getFileInfo("/2dmmc4th"+md5[i,0])["size"]+"字节";
+                    downFile.Refresh();
+                    byte[] downfile = yunfile.readFile("/2dmmc4th" + md5[i, 0]);
+                    FileStream writer = new FileStream(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0], FileMode.Create);
+                    writer.Write(downfile, 0, downfile.Length);
+                    downFile.Text = "";
+                    downFile.Refresh();
+                }
+            }
             this.Close();
         }
     }
