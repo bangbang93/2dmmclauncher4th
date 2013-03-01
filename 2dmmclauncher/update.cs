@@ -141,7 +141,11 @@ namespace _2dmmclauncher
                 {
                     break;
                 }
-                string lmd5 = GetMD5HashFromFile(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0]);
+                string lmd5="";
+                if (File.Exists(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0]))
+                {
+                    lmd5 = GetMD5HashFromFile(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0]);
+                }
                 checkDir.Text=md5[i,0].Substring(0,md5[i,0].LastIndexOf(@"\"));
                 checkDir.Refresh();
                 checkFile.Text = md5[i, 0].Substring(md5[i, 0].LastIndexOf(@"\"), md5[i, 0].Length - md5[i, 0].LastIndexOf(@"\"));
