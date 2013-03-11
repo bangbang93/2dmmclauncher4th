@@ -168,31 +168,45 @@ namespace _2dmmclauncher
                 XmlElement JavaInfo = cfg.CreateElement("JavaInfo");
                 JavaInfo.SetAttribute("javaxmx", javaxmx);
                 {
-                    RegistryKey lm = Registry.LocalMachine;
-                    RegistryKey sf = lm.OpenSubKey("SOFTWARE");
-                    RegistryKey js = sf.OpenSubKey("JavaSoft");
-                    RegistryKey jre = js.OpenSubKey("Java Runtime Environment");
-                    RegistryKey reg = Registry.LocalMachine;
-                    reg = reg.OpenSubKey("SOFTWARE").OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
-
-                    bool flag = false;
-                    foreach (string ver in jre.GetSubKeyNames())
+                    try
                     {
-                        try
+                        RegistryKey lm = Registry.LocalMachine;
+                        RegistryKey sf = lm.OpenSubKey("SOFTWARE");
+                        RegistryKey js = sf.OpenSubKey("JavaSoft");
+                        RegistryKey jre = js.OpenSubKey("Java Runtime Environment");
+                        RegistryKey reg = Registry.LocalMachine;
+                        reg = reg.OpenSubKey("SOFTWARE").OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
+                        bool flag = false;
+                        foreach (string ver in jre.GetSubKeyNames())
                         {
-                            RegistryKey command = jre.OpenSubKey(ver);
-                            string str = command.GetValue("JavaHome").ToString();
-                            if (str != "")
+                            try
                             {
-                                javaw=str + @"\bin\javaw.exe";
-                                flag = true;
-                                break;
+                                RegistryKey command = jre.OpenSubKey(ver);
+                                string str = command.GetValue("JavaHome").ToString();
+                                if (str != "")
+                                {
+                                    javaw = str + @"\bin\javaw.exe";
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            catch { }
+
+                        }
+                        if (!flag)
+                        {
+                            MessageBox.Show("获取javaw.exe目录失败，请手动查找");
+                            OpenFileDialog javawp = new OpenFileDialog();
+                            javawp.Multiselect = false;
+                            javawp.Title = "请选择javaw.exe";
+                            javawp.Filter = "javaw.exe|javaw.exe";
+                            if (javawp.ShowDialog() == DialogResult.OK)
+                            {
+                                javaw = javawp.FileName;
                             }
                         }
-                        catch { }
-
                     }
-                    if (!flag)
+                    catch
                     {
                         MessageBox.Show("获取javaw.exe目录失败，请手动查找");
                         OpenFileDialog javawp = new OpenFileDialog();
