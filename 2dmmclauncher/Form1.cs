@@ -20,7 +20,7 @@ namespace _2dmmclauncher
 {
     public partial class Form1 : Form
     {
-        public Process launcher = new Process();
+        static public Process launcher = new Process();
         bool normalExit = true;
         public string playername;
         public string javaxmx;
@@ -31,7 +31,7 @@ namespace _2dmmclauncher
             InitializeComponent();
         }
        
-        private void GameExit(object sender, EventArgs e)
+        public void GameExit(object sender, EventArgs e)
         {
             //MessageBox.Show("w");
 
@@ -398,6 +398,7 @@ namespace _2dmmclauncher
                 }
                 StreamReader erp = new StreamReader(filedir);
                 errorReport er = new errorReport(erp.ReadToEnd());
+                timer1.Stop();
                 er.ShowDialog();
                 
             }
@@ -406,6 +407,12 @@ namespace _2dmmclauncher
         {
             launcher.Refresh();
             return launcher.WorkingSet64;
+        }
+
+        private void 设置ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            setting Setting = new setting();
+            Setting.ShowDialog();
         }
 
 

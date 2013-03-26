@@ -19,7 +19,7 @@ namespace _2dmmclauncher
         {
             InitializeComponent();
         }
-
+        static string gamefile=@"http://image.bangbang93.com/2dmmc4th.7z";
         private void Form2_Load(object sender, EventArgs e)
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -57,7 +57,7 @@ namespace _2dmmclauncher
                 File.Delete("2dmmc.dat.tfg");
             }
         }
-        downloader game = new downloader(@"http://image.bangbang93.com/2dmmc4th.7z");
+        downloader game = new downloader(gamefile);
         public string stat = "unfinish";
 
         WebClient downl = new WebClient();
@@ -84,10 +84,32 @@ namespace _2dmmclauncher
 
         void game_Exception(downloader sender, Exception e)
         {
-            
-            MessageBox.Show("下载失败，请重试"+game.Url+"\n"+e.Message );
+            MessageBox.Show("下载失败，请重试"+game.Url+"\n"+e.Message ,"错误");
+            if (MessageBox.Show("是否尝试手动下载?", "手动下载", MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                Process manual = new Process();
+                manual.StartInfo.FileName = gamefile;
+                manual.Start();
+                MessageBox.Show("下载完成后点击确定");
+                MessageBox.Show("将文件重命名为2dmmc.dat后放在启动器目录下点击确定");
+                while (!File.Exists("2dmmc.dat"))
+                {
+                    if (File.Exists("2dmmc.7z"))
+                    {
+                        File.Move("2dmmc.7z", "2dmmc.dat");
+                        Application.Restart();
+                    }
+                    if (!(MessageBox.Show("没找到2dmmc.dat", "没找到文件", MessageBoxButtons.RetryCancel) == DialogResult.Retry))
+                    {
+                        break;
+                    }
+                }
+                if (File.Exists("2dmmc.dat"))
+                {
+                    Application.Restart();
+                }
+            }
             Environment.Exit(0);
-            throw new NotImplementedException();
         }
         
         void game_Speed(downloader sender)
@@ -100,7 +122,7 @@ namespace _2dmmclauncher
             WebClient cmd5 = new WebClient();
             if (cmd5.DownloadString("http://2dmmc.bangbang93.com/cmd54th.txt").Substring(0,32)!=GetMD5HashFromFile("2dmmc.dat").ToUpper())
             {
-                MessageBox.Show("下载错误,请重试\n" + cmd5.DownloadString("http://2dmmc.bangbang93.com/cmd54th.txt") + "\n" + GetMD5HashFromFile("2dmmc.dat").ToUpper());
+                MessageBox.Show("下载文件校验错误,请重试\n" + cmd5.DownloadString("http://2dmmc.bangbang93.com/cmd54th.txt") + "\n" + GetMD5HashFromFile("2dmmc.dat").ToUpper());
                 Environment.Exit(0);
             }
             WebClient d7z=new WebClient();

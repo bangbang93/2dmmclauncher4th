@@ -24,7 +24,7 @@ namespace _2dmmclauncher
 
         private void runState_Load(object sender, EventArgs e)
         {
-            string verPath = f.launcher.StartInfo.FileName.Substring(0, f.launcher.StartInfo.FileName.IndexOf("bin"))+"RELEASE";
+            string verPath = Form1.launcher.StartInfo.FileName.Substring(0, Form1.launcher.StartInfo.FileName.IndexOf("bin"))+"RELEASE";
             try
             {
                 StreamReader verp = new StreamReader(verPath);
@@ -46,9 +46,9 @@ namespace _2dmmclauncher
                 moc1.Dispose();
                 cimobject1.Dispose();
                 totmem = capacity;
-            memLoad.Text = ((double)f.launcher.WorkingSet64 / 1024.0 / 1024.0).ToString("f") + "MB";
+            memLoad.Text = ((double)Form1.launcher.WorkingSet64 / 1024.0 / 1024.0).ToString("f") + "MB";
             memPresent.Text = ((double)f.getworkset() / 1024.0 / 1024.0 / totmem*100).ToString("f") + "%";
-            runTime.Text = (DateTime.Now - f.launcher.StartTime).ToString();
+            runTime.Text = (DateTime.Now - Form1.launcher.StartTime).ToString();
             try
             {
                 StreamReader ver = new StreamReader("ver.txt");
@@ -99,7 +99,7 @@ namespace _2dmmclauncher
         {
             memLoad.Text = ((double)f.getworkset() /1024.0/1024.0).ToString("f")+"MB";
             memPresent.Text = ((double)f.getworkset()/1024.0/1024.0 / totmem*100).ToString("f") + "%";
-            runTime.Text = (DateTime.Now -f.launcher.StartTime).ToString(); 
+            runTime.Text = (DateTime.Now -Form1.launcher.StartTime).ToString(); 
         }
     }
 }
