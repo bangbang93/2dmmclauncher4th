@@ -11,6 +11,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 
+
 namespace _2dmmclauncher
 {
     public partial class downloadForm : Form
@@ -20,13 +21,14 @@ namespace _2dmmclauncher
             InitializeComponent();
         }
         static string gamefile=@"http://image.bangbang93.com/2dmmc4th.7z";
+        static string md5file = @"http://2dmmc.bangbang93.com/cmd54th.txt";
         private void Form2_Load(object sender, EventArgs e)
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             if (File.Exists("2dmmc.dat"))
             {
                 WebClient cmd5 = new WebClient();
-                if (cmd5.DownloadString("http://2dmmc.bangbang93.com/cmd54th.txt").Substring(0, 32) != GetMD5HashFromFile("2dmmc.dat").ToUpper())
+                if (cmd5.DownloadString(md5file).Substring(0, 32) != GetMD5HashFromFile("2dmmc.dat").ToUpper())
                 {
                     MessageBox.Show("找到下载文件，但是与服务器MD5效验不同，重新下载");
                     File.Delete("2dmmc.dat");
@@ -79,7 +81,6 @@ namespace _2dmmclauncher
         void game_Connected(downloader sender, string filename, string contentType)
         {
             size.Text = ((double)game.ContentLength/1024.0/1024.0).ToString("f")+"MB";
-            //throw new NotImplementedException();
         }
 
         void game_Exception(downloader sender, Exception e)
@@ -125,8 +126,9 @@ namespace _2dmmclauncher
                 MessageBox.Show("下载文件校验错误,请重试\n" + cmd5.DownloadString("http://2dmmc.bangbang93.com/cmd54th.txt") + "\n" + GetMD5HashFromFile("2dmmc.dat").ToUpper());
                 Environment.Exit(0);
             }
-            WebClient d7z=new WebClient();
+            WebClient d7z = new WebClient();
             d7z.DownloadFile("http://image.bangbang93.com/7za.exe", "unpakcer.exe");
+            
             if (File.Exists("2dmmc.dat") == true)
             {
                 Process un7z = new Process();

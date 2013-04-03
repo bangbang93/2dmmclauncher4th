@@ -97,14 +97,6 @@ namespace _2dmmclauncher
         {
             if (Apply.Text == "确定(&OK)")
             {
-                if (MessageBox.Show("所有设置在重新启动游戏后生效，是否立即重新启动", "设置改动", MessageBoxButtons.OKCancel) == DialogResult.OK)
-                {
-                    Form1.launcher.EnableRaisingEvents = false;
-                    Form1.launcher.Kill();
-                    Form1.launcher.Start();
-                    Form1.launcher.EnableRaisingEvents = true;
-                }
-                
                 this.Close();
                 return;
             }
@@ -126,6 +118,15 @@ namespace _2dmmclauncher
                 cfgvalue.AppendChild(JavaInfo);
                 cfg.AppendChild(cfgvalue);
                 cfg.Save(cfgfile);
+                if (MessageBox.Show("所有设置在重新启动游戏后生效，是否立即重新启动", "设置改动", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    Form1.launcher.EnableRaisingEvents = false;
+                    Form1.launcher.Kill();
+                    Form1.launcher.Start();
+                    Form1.launcher.EnableRaisingEvents = true;
+                }
+                this.Close();
+                return;
             }
         }
     }

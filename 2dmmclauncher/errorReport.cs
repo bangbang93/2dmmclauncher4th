@@ -32,5 +32,15 @@ namespace _2dmmclauncher
         {
             Clipboard.SetText(log);
         }
+
+        private void restartButton_Click(object sender, EventArgs e)
+        {
+            Form1.launcher.EnableRaisingEvents = false;
+            Form1.launcher.Kill();
+            Form1.launcher.Start();
+            Form1.launcher.EnableRaisingEvents = true;
+            this.Close();
+            return;
+        }
     }
 }
