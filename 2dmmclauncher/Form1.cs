@@ -165,6 +165,11 @@ namespace _2dmmclauncher
                     qmem = 512;
                 }
                 javaxmx = qmem.ToString ();
+                string ijavaxmx = Microsoft.VisualBasic.Interaction.InputBox("输入java运行内存大小，默认为四分之一物理内存，如果你对此不了解，直接按确定即可", "javaxmx", javaxmx);
+                if (ijavaxmx != "" && ijavaxmx != null && Convert.ToInt32(ijavaxmx) != 0)
+                {
+                    javaxmx = ijavaxmx;
+                }
                 XmlElement JavaInfo = cfg.CreateElement("JavaInfo");
                 JavaInfo.SetAttribute("javaxmx", javaxmx);
                 {
@@ -177,6 +182,7 @@ namespace _2dmmclauncher
                         RegistryKey reg = Registry.LocalMachine;
                         reg = reg.OpenSubKey("SOFTWARE").OpenSubKey("JavaSoft").OpenSubKey("Java Runtime Environment");
                         bool flag = false;
+                        bool maybe = false;
                         foreach (string ver in jre.GetSubKeyNames())
                         {
                             try
@@ -186,12 +192,40 @@ namespace _2dmmclauncher
                                 if (str != "")
                                 {
                                     javaw = str + @"\bin\javaw.exe";
-                                    flag = true;
-                                    break;
+                                    if (File.Exists(javaw))
+                                    {
+                                        if (javaw.Contains("(x86)"))
+                                        {
+                                            flag = true;
+                                            maybe = true;
+                                        }
+                                        else
+                                        {
+                                            flag = true;
+                                            maybe = false;
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                             catch { }
 
+                        }
+                        if (maybe)
+                        {
+                            if (MessageBox.Show("可能您使用的是64位系统，但是只找到了32位的java，是否要手动指定java路径？64位系统使用32位java可能会带来性能下降问题", "X64", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                            {
+                                OpenFileDialog javawp = new OpenFileDialog();
+                                javawp.Multiselect = false;
+                                javawp.Title = "请选择javaw.exe";
+                                javawp.Filter = "javaw.exe|javaw.exe";
+                                if (javawp.ShowDialog() == DialogResult.OK)
+                                {
+                                    javaw = javawp.FileName;
+                                }
+                                
+                            }
+                            flag = true;
                         }
                         if (!flag)
                         {
