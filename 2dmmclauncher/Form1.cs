@@ -396,7 +396,8 @@ namespace _2dmmclauncher
                         dt = file.LastWriteTime;
                     }
                 }
-                StreamReader erp = new StreamReader(filedir);
+                StreamReader erp = new StreamReader(filedir,Encoding.Default);
+                Thread.Sleep(500);
                 errorReport er = new errorReport(erp.ReadToEnd());
                 timer1.Stop();
                 er.ShowDialog();
