@@ -165,7 +165,7 @@ namespace _2dmmclauncher
                     qmem = 512;
                 }
                 javaxmx = qmem.ToString ();
-                string ijavaxmx = Microsoft.VisualBasic.Interaction.InputBox("输入java运行内存大小，默认为四分之一物理内存，如果你对此不了解，直接按确定即可", "javaxmx", javaxmx);
+                string ijavaxmx = Interaction.InputBox("输入java运行内存大小，默认为四分之一物理内存，如果你对此不了解，直接按确定即可", "javaxmx", javaxmx);
                 if (ijavaxmx != "" && ijavaxmx != null && Convert.ToInt32(ijavaxmx) != 0)
                 {
                     javaxmx = ijavaxmx;
@@ -367,23 +367,23 @@ namespace _2dmmclauncher
         private void Form1_Shown(object sender, EventArgs e)
         {
             label1.Text = "检测游戏";
-            label1.Refresh();
+            this.Refresh();
             checkgame();
             progressBar1.Value += 1;
             label1.Text = "下载游戏配置文件";
-            label1.Refresh();
+            this.Refresh();
             downloadcfg();
             progressBar1.Value+=1;
             label1.Text = "正在加载配置文件";
-            label1.Refresh();
+            this.Refresh();
             loadconfig();
             progressBar1.Value += 1;
             label1.Text = "正在启动游戏";
-            label1.Refresh();
+            this.Refresh();
             erdmmc(playername, javaxmx, javaw);
             progressBar1.Value += 1;
             label1.Text = "正在检查更新";
-            label1.Refresh();
+            this.Refresh();
             Thread tCheckUpdate = new Thread(new ThreadStart(checkupdate));
             tCheckUpdate.Start();
             progressBar1.Value += 1;
@@ -435,7 +435,15 @@ namespace _2dmmclauncher
                 errorReport er = new errorReport(erp.ReadToEnd());
                 timer1.Stop();
                 er.ShowDialog();
-                
+                try
+                {
+                    ocrashs = crash.GetFiles().Length;
+                }
+                catch
+                {
+                    ocrashs = 0;
+                }
+                timer1.Start();
             }
         }
         public long getworkset()

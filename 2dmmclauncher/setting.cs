@@ -122,8 +122,7 @@ namespace _2dmmclauncher
                 {
                     Form1.launcher.EnableRaisingEvents = false;
                     Form1.launcher.Kill();
-                    Form1.launcher.Start();
-                    Form1.launcher.EnableRaisingEvents = true;
+                    Application.Restart();
                 }
                 this.Close();
                 return;
