@@ -20,12 +20,12 @@ namespace _2dmmclauncher
 {
     public partial class Form1 : Form
     {
-        static public Process launcher = new Process();
+        static public Process launcher = new Process();  //启动器核心，用于加载MC
         bool normalExit = true;
         public string playername;
         public string javaxmx;
         public string javaw;
-        public string cfgfile = "2dmmccfg.xml";
+        public string cfgfile = "2dmmccfg.xml";  //配置文件
         public Form1()
         {
             InitializeComponent();
@@ -33,22 +33,20 @@ namespace _2dmmclauncher
        
         public void GameExit(object sender, EventArgs e)
         {
-            //MessageBox.Show("w");
-
-            try
+            try  //配合RMCAL，不过四周目已经用不到它了
             {
                 File.Delete("ver.txt");
                 File.Delete(".minecraft\\bin\\ver.txt");
             }
             catch { }
-            if (normalExit==true)
+            if (normalExit==true) //程序正常退出时注销任务栏托盘图标
             {
                 notifyIcon1.Visible = false;
                 Environment.Exit(0);
             }
         }
 
-        private void erdmmc(string PlayerName,string  JavaXmx,string javaw)
+        private void erdmmc(string PlayerName,string  JavaXmx,string javaw)    //启动器核心
         {
 
             launcher.StartInfo.FileName = javaw;
@@ -80,19 +78,19 @@ namespace _2dmmclauncher
             }
             launcher.StartInfo.UseShellExecute = false;
             launcher.StartInfo.WorkingDirectory = Environment.CurrentDirectory+"\\.minecraft\\bin";
-            Environment.SetEnvironmentVariable("APPDATA", Environment.CurrentDirectory);
+            Environment.SetEnvironmentVariable("APPDATA", Environment.CurrentDirectory);//不设置的话会去访问系统的%appdata%目录下的.minecraft目录
             launcher.StartInfo.Arguments = "-Xincgc -Xmx" + JavaXmx + "M -XX:PermSize=64m -XX:MaxPermSize=128m " + "-Dsun.java2d.noddraw=true -Dsun.java2d.pmoffscreen=false -Dsun.java2d.d3d=false -Dsun.java2d.opengl=false -cp \"" + Environment.CurrentDirectory + "\\.minecraft\\bin\\minecraft.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\lwjgl.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\lwjgl_util.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\jinput.jar\" -Djava.library.path=\"" + Environment.CurrentDirectory + "\\.minecraft\\bin\\natives\" net.minecraft.client.Minecraft " + PlayerName;
 
             launcher.EnableRaisingEvents = true;
             launcher.Exited += new EventHandler(GameExit);
             launcher.Start();
             Thread.Sleep(5000);
-            timer1.Enabled = true;
+            timer1.Enabled = true;  //每秒读取crash-reports目录，有变化即判断为有崩溃报告
         }
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Left = Screen.PrimaryScreen.WorkingArea.Width - this.Width;
-            this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Height;
+            this.Top = Screen.PrimaryScreen.WorkingArea.Height - this.Height;  //将程序窗口定位到屏幕右下角
             Control.CheckForIllegalCrossThreadCalls = false;
         }
 
@@ -126,7 +124,7 @@ namespace _2dmmclauncher
 
             }
             #endregion
-            if (File.Exists(cfgfile))
+            if (File.Exists(cfgfile))  
             {
                 XmlDocument cfg = new XmlDocument();
                 cfg.Load(cfgfile);
@@ -139,7 +137,7 @@ namespace _2dmmclauncher
             }
             else
             {
-                playername = Interaction.InputBox("请输入用户名(仅影响单机模式，用于单机模式获取皮肤)", "用户名", "Player");
+                playername = Interaction.InputBox("请输入用户名(仅影响单机模式，用于单机模式获取皮肤)", "用户名", "Player");  //c#没有inputbox，调用VB的inputbox
                 XmlDocument cfg=new XmlDocument();
                 XmlDeclaration xmldecl;
                 xmldecl = cfg.CreateXmlDeclaration("1.0", "utf-8",null);
@@ -150,6 +148,7 @@ namespace _2dmmclauncher
                 XmlElement player = cfg.CreateElement("PlayerInfo");
                 player.SetAttribute("playername", playername);
                 cfgvalue.AppendChild(player);
+                //获取系统物理内存大小，支持大于4G的内存
                 double capacity = 0.0;
                 ManagementClass cimobject1 = new ManagementClass("Win32_PhysicalMemory");
                 ManagementObjectCollection moc1 = cimobject1.GetInstances();
@@ -165,12 +164,14 @@ namespace _2dmmclauncher
                     qmem = 512;
                 }
                 javaxmx = qmem.ToString ();
+                //取四分之一在一些机器上会出现无法创建java虚拟机的情况，所以这里添加一个手动输入窗口
                 string ijavaxmx = Interaction.InputBox("输入java运行内存大小，默认为四分之一物理内存，如果你对此不了解，直接按确定即可", "javaxmx", javaxmx);
                 if (ijavaxmx != "" && ijavaxmx != null && Convert.ToInt32(ijavaxmx) != 0)
                 {
                     javaxmx = ijavaxmx;
                 }
                 XmlElement JavaInfo = cfg.CreateElement("JavaInfo");
+                //从注册表读取java安装信息，对于64位系统，只判断目录名里是否有x86字串
                 JavaInfo.SetAttribute("javaxmx", javaxmx);
                 {
                     try
@@ -266,15 +267,16 @@ namespace _2dmmclauncher
         {
             WebClient verc = new WebClient();
             verc.DownloadFile("http://2dmmc.bangbang93.com/ver4th.txt", "ver.txt");
+            //获取服务器上的版本标识，等待10秒后读取MC输出的版本号
             Thread.Sleep(10000);
             try
             {
                 StreamReader ver = new StreamReader("ver.txt");
                 StreamReader cver = new StreamReader(".minecraft\\bin\\ver.txt");
-                string vers = ver.ReadLine();
-                string isMust = ver.ReadLine();
-                string updateurl = ver.ReadLine();
-                string cvers = cver.ReadLine();
+                string vers = ver.ReadLine();  //版本号，字符串类型
+                string isMust = ver.ReadLine();  //是否为强制更新，0=false;1=true
+                string updateurl = ver.ReadLine();  //升级URL，已放弃不用
+                string cvers = cver.ReadLine();  //本地版本号
                 ver.Close();
                 cver.Close();
                 Application.DoEvents();
@@ -286,9 +288,10 @@ namespace _2dmmclauncher
                         {
                             this.Hide();
                             normalExit = false;
+                            launcher.EnableRaisingEvents = false;
                             launcher.Kill();
                             update Update = new update();
-                            Update.ShowDialog();
+                            while (Update.ShowDialog() == DialogResult.Retry) { }
                             Application.Restart();
                         }
                         else
@@ -297,9 +300,10 @@ namespace _2dmmclauncher
                             {
                                 this.Hide();
                                 normalExit = false;
+                                launcher.EnableRaisingEvents = false;
                                 launcher.Kill();
                                 update Update = new update();
-                                Update.ShowDialog();
+                                while (Update.ShowDialog() == DialogResult.Retry) { }
                                 Application.Restart();
                             }
                         }
@@ -310,9 +314,10 @@ namespace _2dmmclauncher
                         {
                             //this.Hide();
                             normalExit = false;
-                            launcher.Kill();
+                            launcher.EnableRaisingEvents = false;
+                            launcher.Kill(); 
                             update Update = new update();
-                            Update.ShowDialog();
+                            while (Update.ShowDialog() == DialogResult.Retry) { }
                             Application.Restart();
                         }
                     }
@@ -332,7 +337,7 @@ namespace _2dmmclauncher
             }
             Application.ExitThread();
         }
-        downloadForm downloader = new downloadForm();
+        downloadForm downloader = new downloadForm();   
         private void checkgame()
         {
             if (File.Exists(".minecraft\\bin\\minecraft.jar") == false)
@@ -349,7 +354,7 @@ namespace _2dmmclauncher
                 }
                 
             }
-            DirectoryInfo crash = new DirectoryInfo(@".minecraft\crash-reports");
+            DirectoryInfo crash = new DirectoryInfo(@".minecraft\crash-reports");   //获取游戏启动时的崩溃报告数量
             try
             {
                 ocrashs = crash.GetFiles().Length;
@@ -359,7 +364,7 @@ namespace _2dmmclauncher
                 ocrashs = 0;
             }
         }
-        private void downloadcfg()
+        private void downloadcfg()   //RMCA配置文件下载
         {
             WebClient cfg = new WebClient();
             cfg.DownloadFile("http://2dmmc.bangbang93.com/RMCAClien1.0", ".minecraft\\RMCAuthServer.txt");
@@ -402,7 +407,7 @@ namespace _2dmmclauncher
 
         private void runState_Click(object sender, EventArgs e)
         {
-            runState rs = new runState(this );
+            runState rs = new runState(this );  //运行状态窗口
             rs.ShowDialog();
         }
         int ocrashs;
@@ -431,7 +436,7 @@ namespace _2dmmclauncher
                     }
                 }
                 StreamReader erp = new StreamReader(filedir,Encoding.Default);
-                Thread.Sleep(500);
+                Thread.Sleep(500);  //等待半秒， 以防文件没有写完
                 errorReport er = new errorReport(erp.ReadToEnd());
                 timer1.Stop();
                 er.ShowDialog();

@@ -43,7 +43,7 @@ namespace _2dmmclauncher
                 throw new Exception("GetMD5HashFromFile() fail,error:" + ex.Message);
             }
         }
-
+        #region 废弃的方法
         void getDirInfo(string remoteDir, string localDir)
         {
             //Console.WriteLine(remoteDir);
@@ -51,7 +51,6 @@ namespace _2dmmclauncher
             DirectoryInfo localFile = new DirectoryInfo(localDir);
             checkDir.Text = remoteDir;
             checkDir.Refresh();
-            progressBar1.Maximum += remoteFile.Count;
             TaskbarManager.Instance.SetProgressValue(progressBar1.Value, progressBar1.Maximum);
             if (!localFile.Exists)
             {
@@ -105,6 +104,7 @@ namespace _2dmmclauncher
 
             }
         }
+        #endregion
 
         private void update_Shown(object sender, EventArgs e)
         {
@@ -144,7 +144,21 @@ namespace _2dmmclauncher
                 string lmd5="";
                 if (File.Exists(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0]))
                 {
-                    lmd5 = GetMD5HashFromFile(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0]);
+                    try
+                    {
+                        lmd5 = GetMD5HashFromFile(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0]);
+                    }
+                    catch
+                    {
+                        if (MessageBox.Show("minecraft程序文件被占用，是否尝试强行解除占用（如果此信息重复出现，请换个姿势再尝试）", "文件被占用", MessageBoxButtons.OKCancel, MessageBoxIcon.Error) == DialogResult.OK)
+                        {
+                            Form1.launcher.Kill();
+                            this.DialogResult = DialogResult.Retry;
+                            this.Close();
+                            return;
+                        }
+
+                    }
                 }
                 checkDir.Text=md5[i,0].Substring(0,md5[i,0].LastIndexOf(@"\"));
                 checkDir.Refresh();
@@ -153,8 +167,16 @@ namespace _2dmmclauncher
                 if (lmd5 != md5[i, 1])
                 {
                     downFile.Text = "正在下载" + md5[i,0]+"|"+yunfile.getFileInfo("/2dmmc4th"+md5[i,0])["size"]+"字节";
+                    if (Convert.ToInt32( yunfile.getFileInfo("/2dmmc4th" + md5[i, 0])["size"]) == 0)
+                    {
+                        File.Delete(md5[i, 0]);
+                    }
                     downFile.Refresh();
                     byte[] downfile = yunfile.readFile("/2dmmc4th" + md5[i, 0]);
+                    if (!Directory.Exists(md5[i,0].Substring(0,md5[i,0].LastIndexOf('\\'))))
+                    {
+                        Directory.CreateDirectory(md5[i,0].Substring(0,md5[i,0].LastIndexOf('\\')));
+                    }
                     FileStream writer = new FileStream(Environment.CurrentDirectory + @"\.minecraft" + md5[i, 0], FileMode.Create);
                     writer.Write(downfile, 0, downfile.Length);
                     downFile.Text = "";
@@ -162,6 +184,11 @@ namespace _2dmmclauncher
                 }
             }
             this.Close();
+        }
+
+        private void update_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

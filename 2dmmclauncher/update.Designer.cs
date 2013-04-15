@@ -78,6 +78,7 @@
             this.Controls.Add(this.progressBar1);
             this.Name = "update";
             this.Text = "update";
+            this.Load += new System.EventHandler(this.update_Load);
             this.Shown += new System.EventHandler(this.update_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();

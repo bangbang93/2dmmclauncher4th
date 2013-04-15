@@ -22,13 +22,15 @@ namespace _2dmmclauncher
         }
         static string gamefile=@"http://image.bangbang93.com/2dmmc4th.7z";
         static string md5file = @"http://2dmmc.bangbang93.com/cmd54th.txt";
+        string cmd5;
         private void Form2_Load(object sender, EventArgs e)
         {
             Control.CheckForIllegalCrossThreadCalls = false;
             if (File.Exists("2dmmc.dat"))
             {
-                WebClient cmd5 = new WebClient();
-                if (cmd5.DownloadString(md5file).Substring(0, 32) != GetMD5HashFromFile("2dmmc.dat").ToUpper())
+                WebClient cmd5f = new WebClient();
+                cmd5 = cmd5f.DownloadString(md5file).Substring(0, 32).ToUpper();
+                if (cmd5 != GetMD5HashFromFile("2dmmc.dat").ToUpper())
                 {
                     MessageBox.Show("找到下载文件，但是与服务器MD5效验不同，重新下载");
                     File.Delete("2dmmc.dat");
@@ -60,13 +62,11 @@ namespace _2dmmclauncher
             }
         }
         downloader game = new downloader(gamefile);
-        public string stat = "unfinish";
 
         WebClient downl = new WebClient();
         private void downloadForm_Shown(object sender, EventArgs e)
         {
-            //MessageBox.Show("w");
-            game.ThreadCount = 5;
+            game.ThreadCount = 5;   
             game.Filename = "2dmmc.dat";
             game.DirectoryName = Environment.CurrentDirectory;
             game.Progress += new downloader.ProgressEventHandler(game_Progress);
@@ -116,14 +116,12 @@ namespace _2dmmclauncher
         void game_Speed(downloader sender)
         {
             speed.Text = sender.SpeedStr;
-            //throw new NotImplementedException();
         }
         void game_Finished(downloader sender)
         {
-            WebClient cmd5 = new WebClient();
-            if (cmd5.DownloadString("http://2dmmc.bangbang93.com/cmd54th.txt").Substring(0,32)!=GetMD5HashFromFile("2dmmc.dat").ToUpper())
+            if (cmd5 !=GetMD5HashFromFile("2dmmc.dat").ToUpper())
             {
-                MessageBox.Show("下载文件校验错误,请重试\n" + cmd5.DownloadString("http://2dmmc.bangbang93.com/cmd54th.txt") + "\n" + GetMD5HashFromFile("2dmmc.dat").ToUpper());
+                MessageBox.Show("下载文件校验错误,请重试\n" + cmd5 + "\n" + GetMD5HashFromFile("2dmmc.dat").ToUpper());
                 Environment.Exit(0);
             }
             WebClient d7z = new WebClient();
@@ -143,29 +141,26 @@ namespace _2dmmclauncher
                 else
                 {
                     MessageBox.Show("找不到下载的文件");
-                    Environment.Exit(0);
+                    Environment.Exit(2);
                  }
-            stat = "finish";
         }
 
         void un7z_Exited(object sender, EventArgs e)
         {
             Thread.Sleep(2000);
-            throw new NotImplementedException();
         }
 
         void game_Progress(downloader sender)
         {
             progressBar1.Value = sender.FinishedRate;
             prog.Text = sender.FinishedRate.ToString()+"%";
-            //speed.Text = sender.SpeedStr;
-            //throw new NotImplementedException();
         }
 
         private void buttonCancal_Click(object sender, EventArgs e)
         {
             game.Stop();
             Environment.Exit(0);
+            //下载器依靠自身生成的配置文件可以实现断点续传，虽然不太稳定
         }
         public static string GetMD5HashFromFile(string fileName)
         {

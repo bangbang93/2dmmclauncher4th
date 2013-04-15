@@ -24,6 +24,7 @@ namespace _2dmmclauncher
 
         private void runState_Load(object sender, EventArgs e)
         {
+            //读取java目录下的release文件获取java信息，本来是想用java -version的，但是无论如何也获取不到它的输出
             string verPath = Form1.launcher.StartInfo.FileName.Substring(0, Form1.launcher.StartInfo.FileName.IndexOf("bin"))+"RELEASE";
             try
             {
@@ -36,6 +37,7 @@ namespace _2dmmclauncher
             {
                 javaVersion.Text = "获取失败";
             }
+            //物理内存大小，MB，支持64bit
             double capacity = 0.0;
                 ManagementClass cimobject1 = new ManagementClass("Win32_PhysicalMemory");
                 ManagementObjectCollection moc1 = cimobject1.GetInstances();
@@ -49,7 +51,7 @@ namespace _2dmmclauncher
             memLoad.Text = ((double)Form1.launcher.WorkingSet64 / 1024.0 / 1024.0).ToString("f") + "MB";
             memPresent.Text = ((double)f.getworkset() / 1024.0 / 1024.0 / totmem*100).ToString("f") + "%";
             runTime.Text = (DateTime.Now - Form1.launcher.StartTime).ToString();
-            try
+            try  //本地和远程版本号
             {
                 StreamReader ver = new StreamReader("ver.txt");
                 currectVer.Text = ver.ReadLine();
@@ -59,7 +61,7 @@ namespace _2dmmclauncher
                 cver.Close();
             }
             catch { }
-            try
+            try  //系统位数，系统名称
             {
                 ManagementClass searcher = new ManagementClass("WIN32_Processor");
                 ManagementObjectCollection moc = searcher.GetInstances();
@@ -71,7 +73,7 @@ namespace _2dmmclauncher
                 }
             }
             catch { }
-            try
+            try  //显卡， 支持多显卡
             {
                 ManagementClass searcher = new ManagementClass("Win32_VideoController");
                 ManagementObjectCollection moc = searcher.GetInstances();
@@ -82,7 +84,7 @@ namespace _2dmmclauncher
             }
             catch { }
             hardWare.Text += (totmem).ToString()+"MB\n";
-            try
+            try  //系统版本
             {
                 ManagementClass searcher = new ManagementClass("Win32_OperatingSystem");
                 ManagementObjectCollection moc = searcher.GetInstances();
@@ -95,7 +97,7 @@ namespace _2dmmclauncher
             }
             catch { }
         }
-        private void timer1_Tick(object sender, EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)  //每秒刷新javaw进程内存开销和运行时间
         {
             memLoad.Text = ((double)f.getworkset() /1024.0/1024.0).ToString("f")+"MB";
             memPresent.Text = ((double)f.getworkset()/1024.0/1024.0 / totmem*100).ToString("f") + "%";
