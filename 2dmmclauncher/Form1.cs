@@ -22,10 +22,10 @@ namespace _2dmmclauncher
     {
         static public Process launcher = new Process();  //启动器核心，用于加载MC
         bool normalExit = true;
-        public string playername;
-        public string javaxmx;
-        public string javaw;
-        public string cfgfile = "2dmmccfg.xml";  //配置文件
+        public static string playername;
+        public static string javaxmx;
+        public static string javaw;
+        public static string cfgfile = "2dmmccfg.xml";  //配置文件
         public Form1()
         {
             InitializeComponent();
