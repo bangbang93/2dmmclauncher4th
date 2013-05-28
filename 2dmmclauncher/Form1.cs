@@ -340,12 +340,12 @@ namespace _2dmmclauncher
         downloadForm downloader = new downloadForm();   
         private void checkgame()
         {
-            if (File.Exists("2dmmc4th.7z"))
+            if ((File.Exists("2dmmc.dat") || File.Exists("2dmmc4th.7z")) && !File.Exists(".minecraft\\bin\\minecraft.jar"))
             {
-                File.Move("2dmmc4th.7z", "2dmmc.dat");
-            }
-            if (File.Exists("2dmmc.dat") && !File.Exists(".minecraft\\bin\\minecraft.jar"))
-            {
+                if (File.Exists("2dmmc4th.7z"))
+                {
+                    File.Move("2dmmc4th.7z", "2dmmc.dat");
+                }
                 //this.Hide();
                 downloader.ShowDialog();
                 downloader.Close();
