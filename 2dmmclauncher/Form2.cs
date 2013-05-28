@@ -20,7 +20,7 @@ namespace _2dmmclauncher
         {
             InitializeComponent();
         }
-        static string gamefile=@"http://image.bangbang93.com/2dmmc4th.7z";
+        static string gamefile=@"http://file.bangbang93.com/2dmmc4th.7z";
         static string md5file = @"http://2dmmc.bangbang93.com/cmd54th.txt";
         string cmd5;
         private void Form2_Load(object sender, EventArgs e)
@@ -85,7 +85,7 @@ namespace _2dmmclauncher
 
         void game_Exception(downloader sender, Exception e)
         {
-            MessageBox.Show("下载失败，请重试"+game.Url+"\n"+e.Message ,"错误");
+            MessageBox.Show("下载失败，请重试或尝试手动下载"+game.Url+"\n"+e.Message ,"错误");
             if (MessageBox.Show("是否尝试手动下载?", "手动下载", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
                 Process manual = new Process();
@@ -119,14 +119,13 @@ namespace _2dmmclauncher
         }
         void game_Finished(downloader sender)
         {
-            if (cmd5 !=GetMD5HashFromFile("2dmmc.dat").ToUpper())
-            {
-                MessageBox.Show("下载文件校验错误,请重试\n" + cmd5 + "\n" + GetMD5HashFromFile("2dmmc.dat").ToUpper());
-                Environment.Exit(0);
-            }
             WebClient d7z = new WebClient();
             d7z.DownloadFile("http://image.bangbang93.com/7za.exe", "unpakcer.exe");
             
+            if (File.Exists("2dmmc4th.7z"))
+            {
+                File.Move("2dmmc4th.7z", "2dmmc.dat");
+            }
             if (File.Exists("2dmmc.dat") == true)
             {
                 Process un7z = new Process();

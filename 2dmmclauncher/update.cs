@@ -11,9 +11,11 @@ using System.IO;
 using System.Collections;
 using System.Net;
 using Microsoft.WindowsAPICodePack.Taskbar;
+using System.Threading;
 
 namespace _2dmmclauncher
 {
+    delegate byte[] DownFileDel (string filename);
     public partial class update : Form
     {
         public update()
@@ -105,9 +107,16 @@ namespace _2dmmclauncher
             }
         }
         #endregion
-
+        #region 下载线程
+        private byte[] DownFile(string file)
+        {
+            byte[] downfile = yunfile.readFile(file);
+            return downfile;
+        }
+        #endregion
         private void update_Shown(object sender, EventArgs e)
         {
+            DownFileDel dfd = new DownFileDel(DownFile);
             this.Refresh();
             checkDir.Text = "正在获取校验文件";
             checkDir.Refresh();
@@ -172,7 +181,14 @@ namespace _2dmmclauncher
                         File.Delete(md5[i, 0]);
                     }
                     downFile.Refresh();
-                    byte[] downfile = yunfile.readFile("/2dmmc4th" + md5[i, 0]);
+                    IAsyncResult res = dfd.BeginInvoke("/2dmmc4th" + md5[i, 0], null, null);
+                    while (!res.IsCompleted)
+                    {
+                        Thread.Sleep(50);
+                        Application.DoEvents();
+                    }
+                    byte[] downfile = dfd.EndInvoke(res);
+                    //byte[] downfile = yunfile.readFile("/2dmmc4th" + md5[i, 0]);
                     if (!Directory.Exists(md5[i,0].Substring(0,md5[i,0].LastIndexOf('\\'))))
                     {
                         Directory.CreateDirectory(md5[i,0].Substring(0,md5[i,0].LastIndexOf('\\')));

@@ -340,9 +340,19 @@ namespace _2dmmclauncher
         downloadForm downloader = new downloadForm();   
         private void checkgame()
         {
+            if (File.Exists("2dmmc4th.7z"))
+            {
+                File.Move("2dmmc4th.7z", "2dmmc.dat");
+            }
+            if (File.Exists("2dmmc.dat") && !File.Exists(".minecraft\\bin\\minecraft.jar"))
+            {
+                //this.Hide();
+                downloader.ShowDialog();
+                downloader.Close();
+            }
             if (File.Exists(".minecraft\\bin\\minecraft.jar") == false)
             {
-                if (MessageBox.Show("游戏不存在，是否下载？", "", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                if (MessageBox.Show("游戏不存在，是否下载？如果是下载完成后出现这个提示，点确定即可", "", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
                     this.Hide();
                     downloader.ShowDialog();
