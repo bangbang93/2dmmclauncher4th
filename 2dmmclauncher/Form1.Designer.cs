@@ -39,6 +39,9 @@
             this.About = new System.Windows.Forms.ToolStripMenuItem();
             this.设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.服务器切换ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.生存服务器ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.创造服务器ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -71,33 +74,34 @@
             this.runState,
             this.toolStripSeparator1,
             this.About,
-            this.设置ToolStripMenuItem});
+            this.设置ToolStripMenuItem,
+            this.服务器切换ToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(125, 76);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 120);
             // 
             // runState
             // 
             this.runState.Name = "runState";
-            this.runState.Size = new System.Drawing.Size(124, 22);
+            this.runState.Size = new System.Drawing.Size(152, 22);
             this.runState.Text = "运行状态";
             this.runState.Click += new System.EventHandler(this.runState_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(121, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // About
             // 
             this.About.Name = "About";
-            this.About.Size = new System.Drawing.Size(124, 22);
+            this.About.Size = new System.Drawing.Size(152, 22);
             this.About.Text = "关于";
             this.About.Click += new System.EventHandler(this.About_Click);
             // 
             // 设置ToolStripMenuItem
             // 
             this.设置ToolStripMenuItem.Name = "设置ToolStripMenuItem";
-            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.设置ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.设置ToolStripMenuItem.Text = "设置";
             this.设置ToolStripMenuItem.Click += new System.EventHandler(this.设置ToolStripMenuItem_Click);
             // 
@@ -105,6 +109,31 @@
             // 
             this.timer1.Interval = 2000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // 服务器切换ToolStripMenuItem
+            // 
+            this.服务器切换ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.生存服务器ToolStripMenuItem,
+            this.创造服务器ToolStripMenuItem});
+            this.服务器切换ToolStripMenuItem.Name = "服务器切换ToolStripMenuItem";
+            this.服务器切换ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.服务器切换ToolStripMenuItem.Text = "服务器切换";
+            // 
+            // 生存服务器ToolStripMenuItem
+            // 
+            this.生存服务器ToolStripMenuItem.Checked = true;
+            this.生存服务器ToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.生存服务器ToolStripMenuItem.Name = "生存服务器ToolStripMenuItem";
+            this.生存服务器ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.生存服务器ToolStripMenuItem.Text = "生存服务器";
+            this.生存服务器ToolStripMenuItem.Click += new System.EventHandler(this.生存服务器ToolStripMenuItem_Click);
+            // 
+            // 创造服务器ToolStripMenuItem
+            // 
+            this.创造服务器ToolStripMenuItem.Name = "创造服务器ToolStripMenuItem";
+            this.创造服务器ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.创造服务器ToolStripMenuItem.Text = "创造服务器";
+            this.创造服务器ToolStripMenuItem.Click += new System.EventHandler(this.创造服务器ToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -136,6 +165,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ToolStripMenuItem 设置ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 服务器切换ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 生存服务器ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 创造服务器ToolStripMenuItem;
 
     }
 }

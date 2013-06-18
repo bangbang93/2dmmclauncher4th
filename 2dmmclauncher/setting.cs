@@ -21,6 +21,7 @@ namespace _2dmmclauncher
         public string playername;
         public string javaxmx;
         public string javaw;
+        public string gamemode;
         private void setting_Load(object sender, EventArgs e)
         {
             if (File.Exists(cfgfile))
@@ -33,6 +34,18 @@ namespace _2dmmclauncher
                 XmlElement javainfo = (XmlElement)cfgroot.SelectSingleNode("JavaInfo");
                 javaw = javainfo.Attributes["javaw"].Value;
                 javaxmx = javainfo.Attributes["javaxmx"].Value;
+                try
+                {
+                    gamemode = playerinfo.Attributes["gamemode"].Value;
+                }
+                catch
+                {
+                    gamemode = "0";
+                }
+                if (gamemode == "0")
+                    radioSurvive.PerformClick();
+                else
+                    radioCreate.PerformClick();
             }
             else
             {
@@ -111,6 +124,10 @@ namespace _2dmmclauncher
                 XmlNode cfgroot = cfg.SelectSingleNode("edmmc");
                 XmlElement player = cfg.CreateElement("PlayerInfo");
                 player.SetAttribute("playername", playerNameBox.Text);
+                if (radioSurvive.Checked == true)
+                    player.SetAttribute("gamemode", "0");
+                else
+                    player.SetAttribute("gamemode", "1");
                 cfgvalue.AppendChild(player);
                 XmlElement JavaInfo = cfg.CreateElement("JavaInfo");
                 JavaInfo.SetAttribute("javaxmx", JavaXmxBox.Text);
@@ -126,6 +143,29 @@ namespace _2dmmclauncher
                 }
                 this.Close();
                 return;
+            }
+        }
+
+        private void radioSurvive_CheckedChanged(object sender, EventArgs e)
+        {
+            if (gamemode == "0")
+            {
+                if (radioSurvive.Checked != true)
+                {
+                    Apply.Text = "应用(&Apply)";
+                }
+                else
+                {
+                    Apply.Text = "确定(&OK)";
+                }
+            }
+            else if (radioCreate.Checked != true)
+            {
+                Apply.Text = "应用(&Apply)";
+            }
+            else
+            {
+                Apply.Text = "确定(&OK)";
             }
         }
     }

@@ -26,6 +26,7 @@ namespace _2dmmclauncher
         public static string javaxmx;
         public static string javaw;
         public static string cfgfile = "2dmmccfg.xml";  //配置文件
+        public static string gamemode ;
         public Form1()
         {
             InitializeComponent();
@@ -79,8 +80,10 @@ namespace _2dmmclauncher
             launcher.StartInfo.UseShellExecute = false;
             launcher.StartInfo.WorkingDirectory = Environment.CurrentDirectory+"\\.minecraft\\bin";
             Environment.SetEnvironmentVariable("APPDATA", Environment.CurrentDirectory);//不设置的话会去访问系统的%appdata%目录下的.minecraft目录
-            launcher.StartInfo.Arguments = "-Xincgc -Xmx" + JavaXmx + "M -XX:PermSize=64m -XX:MaxPermSize=128m " + "-Dsun.java2d.noddraw=true -Dsun.java2d.pmoffscreen=false -Dsun.java2d.d3d=false -Dsun.java2d.opengl=false -cp \"" + Environment.CurrentDirectory + "\\.minecraft\\bin\\minecraft.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\lwjgl.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\lwjgl_util.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\jinput.jar\" -Djava.library.path=\"" + Environment.CurrentDirectory + "\\.minecraft\\bin\\natives\" net.minecraft.client.Minecraft " + PlayerName;
-
+            if (gamemode=="0")
+                launcher.StartInfo.Arguments = "-Xincgc -Xmx" + JavaXmx + "M -XX:PermSize=64m -XX:MaxPermSize=128m " + "-Dsun.java2d.noddraw=true -Dsun.java2d.pmoffscreen=false -Dsun.java2d.d3d=false -Dsun.java2d.opengl=false -cp \"" + Environment.CurrentDirectory + "\\.minecraft\\bin\\survive.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\lwjgl.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\lwjgl_util.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\jinput.jar\" -Djava.library.path=\"" + Environment.CurrentDirectory + "\\.minecraft\\bin\\natives\" net.minecraft.client.Minecraft " + PlayerName;
+            else
+                launcher.StartInfo.Arguments = "-Xincgc -Xmx" + JavaXmx + "M -XX:PermSize=64m -XX:MaxPermSize=128m " + "-Dsun.java2d.noddraw=true -Dsun.java2d.pmoffscreen=false -Dsun.java2d.d3d=false -Dsun.java2d.opengl=false -cp \"" + Environment.CurrentDirectory + "\\.minecraft\\bin\\create.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\lwjgl.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\lwjgl_util.jar;" + Environment.CurrentDirectory + "\\.minecraft\\bin\\jinput.jar\" -Djava.library.path=\"" + Environment.CurrentDirectory + "\\.minecraft\\bin\\natives\" net.minecraft.client.Minecraft " + PlayerName;
             launcher.EnableRaisingEvents = true;
             launcher.Exited += new EventHandler(GameExit);
             launcher.Start();
@@ -129,8 +132,16 @@ namespace _2dmmclauncher
                 XmlDocument cfg = new XmlDocument();
                 cfg.Load(cfgfile);
                 XmlNode cfgroot = cfg.SelectSingleNode("edmmc");
-                XmlElement playerinfo = (XmlElement )cfgroot.SelectSingleNode("PlayerInfo");
+                XmlElement playerinfo = (XmlElement)cfgroot.SelectSingleNode("PlayerInfo");
                 playername = playerinfo.Attributes["playername"].Value;
+                try
+                {
+                    gamemode = playerinfo.Attributes["gamemode"].Value;
+                }
+                catch (NullReferenceException)
+                {
+                    gamemode = "0";
+                }
                 XmlElement javainfo = (XmlElement)cfgroot.SelectSingleNode("JavaInfo");
                 javaw = javainfo.Attributes["javaw"].Value;
                 javaxmx=javainfo.Attributes["javaxmx"].Value;
@@ -147,6 +158,7 @@ namespace _2dmmclauncher
                 XmlNode cfgroot = cfg.SelectSingleNode("edmmc");
                 XmlElement player = cfg.CreateElement("PlayerInfo");
                 player.SetAttribute("playername", playername);
+                player.SetAttribute("gamemode", "0");
                 cfgvalue.AppendChild(player);
                 //获取系统物理内存大小，支持大于4G的内存
                 double capacity = 0.0;
@@ -340,7 +352,7 @@ namespace _2dmmclauncher
         downloadForm downloader = new downloadForm();   
         private void checkgame()
         {
-            if ((File.Exists("2dmmc.dat") || File.Exists("2dmmc4th.7z")) && !File.Exists(".minecraft\\bin\\minecraft.jar"))
+            if ((File.Exists("2dmmc.dat") || File.Exists("2dmmc4th.7z")) && !File.Exists(".minecraft\\bin\\survive.jar"))
             {
                 if (File.Exists("2dmmc4th.7z"))
                 {
@@ -350,7 +362,7 @@ namespace _2dmmclauncher
                 downloader.ShowDialog();
                 downloader.Close();
             }
-            if (File.Exists(".minecraft\\bin\\minecraft.jar") == false)
+            if (File.Exists(".minecraft\\bin\\survive.jar") == false)
             {
                 if (MessageBox.Show("游戏不存在，是否下载？如果是下载完成后出现这个提示，点确定即可", "", MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
@@ -377,7 +389,24 @@ namespace _2dmmclauncher
         private void downloadcfg()   //RMCA配置文件下载
         {
             WebClient cfg = new WebClient();
-            cfg.DownloadFile("http://2dmmc.bangbang93.com/RMCAClien1.0", ".minecraft\\RMCAuthServer.txt");
+            string cfgfile;
+            switch (gamemode)
+            {
+                case "0": 
+                    cfgfile = "http://2dmmc.bangbang93.com/RMCAClien1.0";
+                    创造服务器ToolStripMenuItem.Checked = false;
+                    生存服务器ToolStripMenuItem.Checked = true;
+                    break;
+                case "1":
+                    创造服务器ToolStripMenuItem.Checked = true;
+                    生存服务器ToolStripMenuItem.Checked = false;
+                    cfgfile = "http://2dmmc.bangbang93.com/RMCAClientCreate";
+                    break;
+                default :
+                    cfgfile = "http://2dmmc.bangbang93.com/RMCAClien1.0";
+                    break;
+            }
+            cfg.DownloadFile(cfgfile, ".minecraft\\RMCAuthServer.txt");
         }
         private void Form1_Shown(object sender, EventArgs e)
         {
@@ -385,23 +414,28 @@ namespace _2dmmclauncher
             this.Refresh();
             checkgame();
             progressBar1.Value += 1;
-            label1.Text = "下载游戏配置文件";
-            this.Refresh();
-            downloadcfg();
-            progressBar1.Value+=1;
+
             label1.Text = "正在加载配置文件";
             this.Refresh();
             loadconfig();
             progressBar1.Value += 1;
+
+            label1.Text = "下载游戏配置文件";
+            this.Refresh();
+            downloadcfg();
+            progressBar1.Value+=1;
+
             label1.Text = "正在启动游戏";
             this.Refresh();
             erdmmc(playername, javaxmx, javaw);
             progressBar1.Value += 1;
+
             label1.Text = "正在检查更新";
             this.Refresh();
             Thread tCheckUpdate = new Thread(new ThreadStart(checkupdate));
             tCheckUpdate.Start();
             progressBar1.Value += 1;
+
             while (tCheckUpdate.ThreadState == System.Threading.ThreadState.Running)
             {
                 this.Refresh();
@@ -471,6 +505,38 @@ namespace _2dmmclauncher
         {
             setting Setting = new setting();
             Setting.ShowDialog();
+        }
+
+        private void 生存服务器ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (生存服务器ToolStripMenuItem.Checked != true)
+            {
+                生存服务器ToolStripMenuItem.Checked = true;
+                创造服务器ToolStripMenuItem.Checked = false;
+                launcher.EnableRaisingEvents = false;
+                launcher.Kill();
+                launcher.StartInfo.Arguments = launcher.StartInfo.Arguments.Replace("create", "survive");
+                string dcfgfile = "http://2dmmc.bangbang93.com/RMCAClien1.0";
+                (new WebClient()).DownloadFile(dcfgfile,".minecraft\\RMCAuthServer.txt");
+                launcher.Start();
+                launcher.EnableRaisingEvents = true;
+            }
+        }
+
+        private void 创造服务器ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (创造服务器ToolStripMenuItem.Checked != true)
+            {
+                生存服务器ToolStripMenuItem.Checked = false;
+                创造服务器ToolStripMenuItem.Checked = true;
+                launcher.EnableRaisingEvents = false;
+                launcher.Kill();
+                launcher.StartInfo.Arguments = launcher.StartInfo.Arguments.Replace("survive", "create");
+                string dcfgfile = "http://2dmmc.bangbang93.com/RMCAClientCreate";
+                (new WebClient()).DownloadFile(dcfgfile,".minecraft\\RMCAuthServer.txt");
+                launcher.Start();
+                launcher.EnableRaisingEvents = true;
+            }
         }
 
 

@@ -37,6 +37,10 @@
             this.javawBox = new System.Windows.Forms.TextBox();
             this.javawpath = new System.Windows.Forms.OpenFileDialog();
             this.button2 = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioSurvive = new System.Windows.Forms.RadioButton();
+            this.radioCreate = new System.Windows.Forms.RadioButton();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -68,7 +72,7 @@
             // 
             // Apply
             // 
-            this.Apply.Location = new System.Drawing.Point(565, 223);
+            this.Apply.Location = new System.Drawing.Point(565, 284);
             this.Apply.Name = "Apply";
             this.Apply.Size = new System.Drawing.Size(141, 38);
             this.Apply.TabIndex = 3;
@@ -114,12 +118,50 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.radioCreate);
+            this.groupBox1.Controls.Add(this.radioSurvive);
+            this.groupBox1.Location = new System.Drawing.Point(29, 213);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(470, 91);
+            this.groupBox1.TabIndex = 8;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "服务器选择";
+            // 
+            // radioSurvive
+            // 
+            this.radioSurvive.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioSurvive.AutoSize = true;
+            this.radioSurvive.Checked = true;
+            this.radioSurvive.Location = new System.Drawing.Point(15, 29);
+            this.radioSurvive.Name = "radioSurvive";
+            this.radioSurvive.Size = new System.Drawing.Size(75, 22);
+            this.radioSurvive.TabIndex = 0;
+            this.radioSurvive.TabStop = true;
+            this.radioSurvive.Text = "生存服务器";
+            this.radioSurvive.UseVisualStyleBackColor = true;
+            this.radioSurvive.CheckedChanged += new System.EventHandler(this.radioSurvive_CheckedChanged);
+            // 
+            // radioCreate
+            // 
+            this.radioCreate.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioCreate.AutoSize = true;
+            this.radioCreate.Location = new System.Drawing.Point(15, 57);
+            this.radioCreate.Name = "radioCreate";
+            this.radioCreate.Size = new System.Drawing.Size(75, 22);
+            this.radioCreate.TabIndex = 1;
+            this.radioCreate.TabStop = true;
+            this.radioCreate.Text = "创造服务器";
+            this.radioCreate.UseVisualStyleBackColor = true;
+            // 
             // setting
             // 
             this.AcceptButton = this.Apply;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(718, 273);
+            this.ClientSize = new System.Drawing.Size(718, 334);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.javawBox);
             this.Controls.Add(this.JavaXmxBox);
@@ -133,6 +175,8 @@
             this.ShowIcon = false;
             this.Text = "设置";
             this.Load += new System.EventHandler(this.setting_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -149,5 +193,8 @@
         private System.Windows.Forms.TextBox javawBox;
         private System.Windows.Forms.OpenFileDialog javawpath;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton radioCreate;
+        private System.Windows.Forms.RadioButton radioSurvive;
     }
 }
